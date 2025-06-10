@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './App.css';
 
 const TicTacToe = () => {
-  const [board, setBoard] = useState(Array(36).fill(null));
+  const [board, setBoard] = useState(Array(81).fill(null)); // 9x9 = 81 cells
   const [isWhiteTurn, setIsWhiteTurn] = useState(true);
   const [gameMode, setGameMode] = useState('human-human');
   const [aiLevel, setAiLevel] = useState(1);
@@ -11,8 +10,8 @@ const TicTacToe = () => {
   const [showAiLevelSelect, setShowAiLevelSelect] = useState(false);
 
   const checkWinner = useCallback((board) => {
-    const size = 6;
-    const winLength = 4;
+    const size = 9; // Changed from 6 to 9
+    const winLength = 7; // Changed from 4 to 7
     
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
@@ -21,6 +20,7 @@ const TicTacToe = () => {
         
         const player = board[index];
         
+        // Check horizontal
         if (col <= size - winLength) {
           let count = 0;
           for (let i = 0; i < winLength; i++) {
@@ -29,6 +29,7 @@ const TicTacToe = () => {
           if (count === winLength) return player;
         }
         
+        // Check vertical
         if (row <= size - winLength) {
           let count = 0;
           for (let i = 0; i < winLength; i++) {
@@ -37,6 +38,7 @@ const TicTacToe = () => {
           if (count === winLength) return player;
         }
         
+        // Check diagonal (top-left to bottom-right)
         if (row <= size - winLength && col <= size - winLength) {
           let count = 0;
           for (let i = 0; i < winLength; i++) {
@@ -45,6 +47,7 @@ const TicTacToe = () => {
           if (count === winLength) return player;
         }
         
+        // Check diagonal (top-right to bottom-left)
         if (row <= size - winLength && col >= winLength - 1) {
           let count = 0;
           for (let i = 0; i < winLength; i++) {
@@ -59,7 +62,7 @@ const TicTacToe = () => {
 
   const findBlockingMove = useCallback((board, player) => {
     const opponent = player === 'white' ? 'black' : 'white';
-    const size = 6;
+    const size = 9; // Changed from 6 to 9
 
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
@@ -85,7 +88,7 @@ const TicTacToe = () => {
     return null;
   }, [checkWinner]);
 
-  const minimax = useCallback((board, depth, isMaximizing, player, maxDepth = 3) => {
+  const minimax = useCallback((board, depth, isMaximizing, player, maxDepth = 2) => {
     const opponent = player === 'white' ? 'black' : 'white';
     const winner = checkWinner(board);
     
@@ -95,7 +98,7 @@ const TicTacToe = () => {
 
     if (isMaximizing) {
       let bestScore = -Infinity;
-      for (let i = 0; i < 36; i++) {
+      for (let i = 0; i < 81; i++) { // Changed from 36 to 81
         if (board[i] === null) {
           board[i] = player;
           const score = minimax(board, depth + 1, false, player, maxDepth);
@@ -106,7 +109,7 @@ const TicTacToe = () => {
       return bestScore;
     } else {
       let bestScore = Infinity;
-      for (let i = 0; i < 36; i++) {
+      for (let i = 0; i < 81; i++) { // Changed from 36 to 81
         if (board[i] === null) {
           board[i] = opponent;
           const score = minimax(board, depth + 1, true, player, maxDepth);
@@ -125,10 +128,10 @@ const TicTacToe = () => {
     const immediateMove = findBlockingMove(board, player);
     if (immediateMove !== null) return immediateMove;
     
-    for (let i = 0; i < 36; i++) {
+    for (let i = 0; i < 81; i++) { // Changed from 36 to 81
       if (board[i] === null) {
         board[i] = player;
-        const score = minimax(board, 0, false, player, 2);
+        const score = minimax(board, 0, false, player, 1); // Reduced depth for 9x9
         board[i] = null;
         if (score > bestScore) {
           bestScore = score;
@@ -211,7 +214,7 @@ const TicTacToe = () => {
       setShowAiLevelSelect(true);
     } else {
       setGameMode(mode);
-      setBoard(Array(36).fill(null));
+      setBoard(Array(81).fill(null)); // Changed from 36 to 81
       setIsWhiteTurn(true);
       setGameStatus('playing');
       setIsGameStarted(true);
@@ -220,7 +223,7 @@ const TicTacToe = () => {
 
   const startGameWithAI = (level) => {
     setAiLevel(level);
-    setBoard(Array(36).fill(null));
+    setBoard(Array(81).fill(null)); // Changed from 36 to 81
     setIsWhiteTurn(true);
     setGameStatus('playing');
     setIsGameStarted(true);
@@ -228,7 +231,7 @@ const TicTacToe = () => {
   };
 
   const resetGame = () => {
-    setBoard(Array(36).fill(null));
+    setBoard(Array(81).fill(null)); // Changed from 36 to 81
     setIsWhiteTurn(true);
     setGameStatus('playing');
   };
@@ -236,7 +239,7 @@ const TicTacToe = () => {
   const backToMenu = () => {
     setIsGameStarted(false);
     setShowAiLevelSelect(false);
-    setBoard(Array(36).fill(null));
+    setBoard(Array(81).fill(null)); // Changed from 36 to 81
     setIsWhiteTurn(true);
     setGameStatus('playing');
   };
@@ -266,7 +269,7 @@ const TicTacToe = () => {
             color: '#1f2937',
             marginBottom: '2rem'
           }}>
-            6x6 Tic-Tac-Toe
+            9x9 Tic-Tac-Toe
           </h1>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <button
@@ -329,7 +332,7 @@ const TicTacToe = () => {
           </div>
           <div style={{ marginTop: '2rem', textAlign: 'center', color: '#6b7280' }}>
             <p style={{ fontSize: '0.875rem' }}>White goes first</p>
-            <p style={{ fontSize: '0.875rem' }}>Get four in a row to win!</p>
+            <p style={{ fontSize: '0.875rem' }}>Get seven in a row to win!</p>
           </div>
         </div>
       </div>
@@ -437,7 +440,7 @@ const TicTacToe = () => {
         borderRadius: '1rem',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         padding: '2rem',
-        maxWidth: '32rem',
+        maxWidth: '40rem', // Increased max width for larger board
         width: '100%'
       }}>
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
@@ -447,7 +450,7 @@ const TicTacToe = () => {
             color: '#1f2937',
             marginBottom: '0.5rem'
           }}>
-            6x6 Tic-Tac-Toe
+            9x9 Tic-Tac-Toe
           </h1>
           <div style={{
             fontSize: '1.125rem',
@@ -482,10 +485,10 @@ const TicTacToe = () => {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: '0.25rem',
+          gridTemplateColumns: 'repeat(9, 1fr)', // Changed from 6 to 9
+          gap: '0.15rem', // Reduced gap for larger board
           marginBottom: '1.5rem',
-          maxWidth: '24rem',
+          maxWidth: '32rem', // Increased max width
           margin: '0 auto 1.5rem auto'
         }}>
           {board.map((cell, index) => (
@@ -497,7 +500,7 @@ const TicTacToe = () => {
                 width: '100%',
                 border: cell === 'white' ? '1px solid #9ca3af' : cell === 'black' ? '1px solid #374151' : '1px solid #d1d5db',
                 borderRadius: '0.25rem',
-                fontSize: '1.125rem',
+                fontSize: '0.875rem', // Reduced font size for smaller cells
                 fontWeight: 'bold',
                 backgroundColor: cell === 'white' ? 'white' : cell === 'black' ? '#1f2937' : '#f3f4f6',
                 color: cell === 'white' ? '#1f2937' : cell === 'black' ? 'white' : '#1f2937',
@@ -563,8 +566,4 @@ const TicTacToe = () => {
   );
 };
 
-function App() {
-  return <TicTacToe />;
-}
-
-export default App;
+export default TicTacToe;
